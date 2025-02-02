@@ -44,196 +44,14 @@ return{
     {
         "folke/flash.nvim",
         event = "VeryLazy",
-        ---@type Flash.Config
         opts = {},
-        -- stylua: ignore
         keys = {
-            { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-            { "S", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-            { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-            { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-            { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+            { "s", mode = { "n", "x", "o" }, function() require('flash').jump() end, desc = "Flash" },
+            { "S", mode = { "n", "o", "x" }, function() require('flash').treesitter() end, desc = "Flash Treesitter" },
+            { "r", mode = "o", function() require('flash').remote() end, desc = "Remote Flash" },
+            { "R", mode = { "o", "x" }, function() require('flash').treesitter_search() end, desc = "Treesitter Search" },
+            { "<c-s>", mode = { "c" }, function() require('flash').toggle() end, desc = "Toggle Flash Search" },
         },
-    },
-    {
-        "p00f/clangd_extensions.nvim",
-        opts = {},
-    },
-    {
-        "hrsh7th/nvim-cmp",
-        version = false, -- last release is way too old
-        event = "InsertEnter",
-        dependencies = {
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-cmdline",
-            "hrsh7th/cmp-nvim-lsp-signature-help", 
-        },
-        opts = function()
-            vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
-            local cmp = require("cmp")
-            local defaults = require("cmp.config.default")()
-            return {
-                enabled = function()
-                    -- disable completion in comments
-                    local context = require 'cmp.config.context'
-                    -- keep command mode completion enabled when cursor is in a comment
-                    if vim.api.nvim_get_mode().mode == 'c' then
-                        return true
-                    else
-                        return not context.in_treesitter_capture("comment") 
-                        and not context.in_syntax_group("Comment")
-                    end
-                end,
-                completion = {
-                    completeopt = "menu,menuone,noinsert",
-                },
-                snippet = {},
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-                    ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-                    ["<C-f>"] = cmp.mapping.scroll_docs(4),
-                    ["<C-Space>"] = cmp.mapping.complete(),
-                    ["<C-e>"] = cmp.mapping.abort(),
-                    ["<Tab>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                    ["<S-CR>"] = cmp.mapping.confirm({
-                        behavior = cmp.ConfirmBehavior.Replace,
-                        select = true,
-                    }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                }),
-                sources = cmp.config.sources({
-                    { name = "nvim_lsp" },
-                    { name = "nvim_lsp_signature_help"},
-                    { name = "path" },
-                }, {
-                    { name = "buffer" },
-                }),
-                experimental = {
-                    ghost_text = {
-                        hl_group = "CmpGhostText",
-                    },
-                },
-                sorting = {
-                    comparators = {
-                        cmp.config.compare.offset,
-                        cmp.config.compare.exact,
-                        cmp.config.compare.recently_used,
-                        require("clangd_extensions.cmp_scores"),
-                        cmp.config.compare.kind,
-                        cmp.config.compare.sort_text,
-                        cmp.config.compare.length,
-                        cmp.config.compare.order,
-                    },
-                },
-            }
-        end,
-        config = function(_,opts)
-            local cmp = require("cmp")
-            cmp.setup(opts)
-            cmp.setup.cmdline({'/','?'}, {
-                mapping = cmp.mapping.preset.cmdline(),
-                sources = {
-                    { name = 'buffer' }
-                }
-            })
-            cmp.setup.cmdline(':', {
-                mapping = cmp.mapping.preset.cmdline(),
-                sources = cmp.config.sources({
-                    { name = 'path' }
-                }, {
-                    {
-                        name = 'cmdline',
-                        option = {
-                            ignore_cmds = { 'Man', '!' }
-                        }
-                    }
-                })
-            })
-        end,
-    },
-    {
-        "neovim/nvim-lspconfig",
-        event = { "BufReadPre", "BufNewFile"},
-        opts = {
-            -- options for vim.diagnostic.config()
-            diagnostics = {
-                underline = true,
-                update_in_insert = false,
-                virtual_text = {
-                    spacing = 2,
-                    source = "if_many",
-                    prefix = "●",
-                },
-                severity_sort = true,
-            },
-            -- Enable this to enable the builtin LSP inlay hints on Neovim >= -2.10.0
-            -- Be aware that you also will need to properly configure your LSP server to
-            -- provide the inlay hints.
-            inlay_hints = {
-                enabled = false,
-            },
-            -- add any global capabilities here
-            capabilities = {},
-            -- Automatically format on save
-            autoformat = true,
-            -- Enable this to show formatters used in a notification
-            -- Useful for debugging formatter issues
-            format_notify = false,
-            -- options for vim.lsp.buf.format
-            -- `bufnr` and `filter` is handled by the LazyVim formatter,
-            -- but can be also overridden when specified
-            format = {
-                formatting_options = nil,
-                timeout_ms = nil,
-            },
-            -- LSP Server Settings
-            ---@type lspconfig.options
-            servers = {
-                clangd = {
-                    keys = {
-                        { "<leader>cR", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Source/Header (C/C++)" },
-                    },
-                    root_dir = function(fname)
-                        return require("lspconfig.util").root_pattern(
-                        "Makefile",
-                        "configure.ac",
-                        "configure.in",
-                        "config.h.in",
-                        "meson.build",
-                        "meson_options.txt",
-                        "build.ninja"
-                        )(fname) 
-                        or require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt")(fname) 
-                        or require("lspconfig.util").find_git_ancestor(fname)
-                    end,
-                    capabilities = {}, 
-                    cmd = {
-                        "clangd",
-                        "--background-index",
-                        "--clang-tidy",
-                        "--header-insertion=iwyu",
-                        "--completion-style=detailed",
-                        "--function-arg-placeholders",
-                        "--fallback-style=llvm=\" { BasedOnStyle: LLVM, UseTab: Never, IndentWidth: 2, TabWidth: 4, BreakBeforeBraces: Attach, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false }\"",
-                    },
-                    init_options = {
-                        usePlaceholders = true,
-                        completeUnimported = true,
-                        clangdFileStatus = true,
-                    },
-                },
-                pyright = {},
-            },
-        },
-        config = function(_,opts)
-            local lspconfig = require("lspconfig")
-            for name,opt in pairs(opts.servers) do
-                lspconfig[name].setup(opt)
-            end
-            -- lspconfig["clangd"].setup(opts.servers["clangd"])
-        end,
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
@@ -364,5 +182,24 @@ return{
                 update_n_lines = "gsn", -- Update `n_lines`
             },
         },
+    },
+    {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make',
+        event = "VeryLazy",
+    },
+    {
+        'nvim-telescope/telescope.nvim', tag = '0.1.8',
+        event = "VeryLazy",
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        keys = {
+            {'<leader>ff', function() require('telescope.builtin').find_files() end, desc = 'Telescope find files'},
+            {'<leader>fg', function() require('telescope.builtin').live_grep() end, desc = 'Telescope live grep'},
+            {'<leader>fb', function() require('telescope.builtin').buffers() end, desc = 'Telescope buffers'},
+            {'<leader>fr', function() require('telescope.builtin').lsp_references() end, desc = 'Telescope references' },
+            {'<leader>fws', function() require('telescope.builtin').lsp_workspace_symbols() end, desc = 'Telescope workspace symbols'},
+            {'<leader>fs', function() require('telescope.builtin').lsp_document_symbols() end, desc = 'Telescope workspace symbols'},
+            {'<leader>fh', function() require('telescope.builtin').help_tags() end, desc = 'Telescope help tags'},
+        }
     },
 }
