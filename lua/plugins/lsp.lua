@@ -80,7 +80,8 @@ return {
                         clangdFileStatus = true,
                     },
                 },
-                pyright = {},
+                pyright = {}, 
+                gopls = {},
                 lua_ls = {
                     on_init = function(client)
                         if client.workspace_folders then
