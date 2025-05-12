@@ -15,7 +15,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         -- See `:help vim.lsp.*` for documentation on any of the below functions
         local opts = { buffer = ev.buf }
         vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, opts)
-        vim.keymap.set('n', 'grd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'grd', '<cmd>tab split | lua vim.lsp.buf.definition()<cr>', opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
         vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
