@@ -1,4 +1,4 @@
-return{
+return {
     {
         "folke/tokyonight.nvim",
         lazy = false,
@@ -6,14 +6,14 @@ return{
         -- enabled = false,
         opts = {},
         config = function()
-            vim.cmd[[syntax enable]]
+            vim.cmd [[syntax enable]]
             require("tokyonight").setup({
                 styles = {
                     comments = { italic = false },
                     keywords = { italic = false },
                 },
             })
-            vim.cmd[[colorscheme tokyonight-moon]]
+            vim.cmd [[colorscheme tokyonight-moon]]
         end,
     },
     {
@@ -23,7 +23,7 @@ return{
         priority = 1000,
         opts = {},
         config = function()
-            vim.cmd[[syntax enable]]
+            vim.cmd [[syntax enable]]
             require("catppuccin").setup({
                 styles = {
                     comments = {},
@@ -46,11 +46,11 @@ return{
         event = "VeryLazy",
         opts = {},
         keys = {
-            { "s", mode = { "n", "x", "o" }, function() require('flash').jump() end, desc = "Flash" },
-            { "S", mode = { "n", "o", "x" }, function() require('flash').treesitter() end, desc = "Flash Treesitter" },
-            { "r", mode = "o", function() require('flash').remote() end, desc = "Remote Flash" },
-            { "R", mode = { "o", "x" }, function() require('flash').treesitter_search() end, desc = "Treesitter Search" },
-            { "<c-s>", mode = { "c" }, function() require('flash').toggle() end, desc = "Toggle Flash Search" },
+            { "s",     mode = { "n", "x", "o" }, function() require('flash').jump() end,              desc = "Flash" },
+            { "S",     mode = { "n", "o", "x" }, function() require('flash').treesitter() end,        desc = "Flash Treesitter" },
+            { "r",     mode = "o",               function() require('flash').remote() end,            desc = "Remote Flash" },
+            { "R",     mode = { "o", "x" },      function() require('flash').treesitter_search() end, desc = "Treesitter Search" },
+            { "<c-s>", mode = { "c" },           function() require('flash').toggle() end,            desc = "Toggle Flash Search" },
         },
     },
     {
@@ -116,7 +116,7 @@ return{
             },
             sections = {
                 lualine_y = {
-                    { "progress", separator = " ", padding = { left = 1, right = 0 } },
+                    { "progress", separator = " ",                  padding = { left = 1, right = 0 } },
                     { "location", padding = { left = 0, right = 1 } },
                 },
                 lualine_z = {
@@ -173,12 +173,12 @@ return{
         event = "VeryLazy",
         opts = {
             mappings = {
-                add = "gsa", -- Add surrounding in Normal and Visual modes
-                delete = "gsd", -- Delete surrounding
-                find = "gsf", -- Find surrounding (to the right)
-                find_left = "gsF", -- Find surrounding (to the left)
-                highlight = "gsh", -- Highlight surrounding
-                replace = "gsr", -- Replace surrounding
+                add = "gsa",            -- Add surrounding in Normal and Visual modes
+                delete = "gsd",         -- Delete surrounding
+                find = "gsf",           -- Find surrounding (to the right)
+                find_left = "gsF",      -- Find surrounding (to the left)
+                highlight = "gsh",      -- Highlight surrounding
+                replace = "gsr",        -- Replace surrounding
                 update_n_lines = "gsn", -- Update `n_lines`
             },
         },
@@ -189,17 +189,37 @@ return{
         event = "VeryLazy",
     },
     {
-        'nvim-telescope/telescope.nvim', tag = '0.1.8',
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.8',
         event = "VeryLazy",
         dependencies = { 'nvim-lua/plenary.nvim' },
+        keys = function(self, _)
+            local tele_builtin = require('telescope.builtin')
+            local mappings = {
+                { '<leader>ff',  function() tele_builtin.find_files() end,            desc = 'Telescope find files' },
+                { '<leader>fg',  function() tele_builtin.live_grep() end,             desc = 'Telescope live grep' },
+                { '<leader>fb',  function() tele_builtin.buffers() end,               desc = 'Telescope buffers' },
+                { '<leader>fr',  function() tele_builtin.lsp_references() end,        desc = 'Telescope references' },
+                { '<leader>fws', function() tele_builtin.lsp_workspace_symbols() end, desc = 'Telescope workspace symbols' },
+                { '<leader>fs',  function() tele_builtin.lsp_document_symbols() end,  desc = 'Telescope workspace symbols' },
+                { '<leader>fh',  function() tele_builtin.help_tags() end,             desc = 'Telescope help tags' },
+            }
+            return mappings
+        end
+    },
+    {
+        'akinsho/toggleterm.nvim',
+        version = "*",
+        opts = {},
         keys = {
-            {'<leader>ff', function() require('telescope.builtin').find_files() end, desc = 'Telescope find files'},
-            {'<leader>fg', function() require('telescope.builtin').live_grep() end, desc = 'Telescope live grep'},
-            {'<leader>fb', function() require('telescope.builtin').buffers() end, desc = 'Telescope buffers'},
-            {'<leader>fr', function() require('telescope.builtin').lsp_references() end, desc = 'Telescope references' },
-            {'<leader>fws', function() require('telescope.builtin').lsp_workspace_symbols() end, desc = 'Telescope workspace symbols'},
-            {'<leader>fs', function() require('telescope.builtin').lsp_document_symbols() end, desc = 'Telescope workspace symbols'},
-            {'<leader>fh', function() require('telescope.builtin').help_tags() end, desc = 'Telescope help tags'},
+            { '<c-\\>',     '<cmd>ToggleTerm direction=horizontal<cr>', desc = 'toggle default terminal' },
+            { '<leader>tf', '<cmd>ToggleTerm direction=float<cr>',      desc = 'toggle float terminal' },
+            { '<leader>th', '<cmd>ToggleTerm direction=horizontal<cr>', desc = 'toggle default terminal' }
         }
+    },
+    {
+        'lewis6991/gitsigns.nvim',
+        event = { "BufReadPost", "BufNewFile" },
+        opts = {}
     },
 }
