@@ -197,12 +197,15 @@ return {
             local tele_builtin = require('telescope.builtin')
             local mappings = {
                 { '<leader>ff',  function() tele_builtin.find_files() end,            desc = 'Telescope find files' },
-                { '<leader>fg',  function() tele_builtin.live_grep() end,             desc = 'Telescope live grep' },
+                { '<leader>/',  function() tele_builtin.live_grep() end,             desc = 'Telescope live grep' },
                 { '<leader>fb',  function() tele_builtin.buffers() end,               desc = 'Telescope buffers' },
                 { '<leader>fr',  function() tele_builtin.lsp_references() end,        desc = 'Telescope references' },
                 { '<leader>fws', function() tele_builtin.lsp_workspace_symbols() end, desc = 'Telescope workspace symbols' },
                 { '<leader>fs',  function() tele_builtin.lsp_document_symbols() end,  desc = 'Telescope workspace symbols' },
                 { '<leader>fh',  function() tele_builtin.help_tags() end,             desc = 'Telescope help tags' },
+                { '<leader>fc', function () tele_builtin.commands() end, desc = 'Telescope commands'},
+                { '<leader>fr', function () tele_builtin.oldfiles() end, desc = 'Telescope recent files'},
+                { '<leader>ft', function () tele_builtin.builtin() end, desc = 'Telescope builtin pickers'},
             }
             return mappings
         end

@@ -15,5 +15,5 @@ return {
                 timeout_ms = 500,
             },
         },
-    }
+    },
 }

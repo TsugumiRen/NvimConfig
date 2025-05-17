@@ -6,7 +6,7 @@ return {
     {
         "hrsh7th/nvim-cmp",
         version = false, -- last release is way too old
-        event = {"InsertEnter", "CmdLineEnter"},
+        event = { "InsertEnter", "CmdLineEnter" },
         dependencies = {
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
@@ -25,11 +25,14 @@ return {
                     if vim.api.nvim_get_mode().mode == 'c' then
                         return true
                     else
-                        return not context.in_treesitter_capture("comment") 
-                        and not context.in_syntax_group("Comment")
+                        return not context.in_treesitter_capture("comment")
+                            and not context.in_syntax_group("Comment")
                     end
                 end,
                 snippet = {},
+                completion = {
+                    completeopt = "menu,menuone,noinsert",
+                },
                 mapping = cmp.mapping.preset.insert({
                     ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
                     ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
@@ -37,21 +40,11 @@ return {
                     ["<C-f>"] = cmp.mapping.scroll_docs(4),
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-e>"] = cmp.mapping.abort(),
-                    ["<Tab>"] = cmp.mapping(function(fallback)
-                        if cmp.visible() then
-                            local entry = cmp.get_selected_entry()
-                            if not entry then
-                                cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-                            end
-                            cmp.confirm()
-                        else
-                            fallback()
-                        end
-                    end, {"i","s"}),
+                    ["<Tab>"] = cmp.mapping.confirm({select = true});
                 }),
                 sources = cmp.config.sources({
                     { name = "nvim_lsp" },
-                    { name = "nvim_lsp_signature_help"},
+                    { name = "nvim_lsp_signature_help" },
                     { name = "path" },
                 }, {
                     { name = "buffer" },
@@ -75,16 +68,22 @@ return {
                 },
             }
         end,
-        config = function(_,opts)
+        config = function(_, opts)
             local cmp = require("cmp")
             cmp.setup(opts)
-            cmp.setup.cmdline({'/','?'}, {
+            cmp.setup.cmdline({ '/', '?' }, {
+                completion = {
+                    completeopt = "menu,menuone,noselect",
+                },
                 mapping = cmp.mapping.preset.cmdline(),
                 sources = {
                     { name = 'buffer' }
                 }
             })
             cmp.setup.cmdline(':', {
+                completion = {
+                    completeopt = "menu,menuone,noselect",
+                },
                 mapping = cmp.mapping.preset.cmdline(),
                 sources = cmp.config.sources({
                     { name = 'path' }
