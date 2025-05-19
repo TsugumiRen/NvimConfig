@@ -223,6 +223,10 @@ return {
     {
         'lewis6991/gitsigns.nvim',
         event = { "BufReadPost", "BufNewFile" },
-        opts = {}
+        opts = {},
+        keys = {
+            {'<leader>gn', '<cmd>Gitsigns next_hunk<cr>', desc = 'next git changes'},
+            {'<leader>gp', '<cmd>Gitsigns prev_hunk<cr>', desc = 'prev git changes'}
+        }
     },
 }

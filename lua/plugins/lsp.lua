@@ -1,19 +1,8 @@
 return {
     {
-        "williamboman/mason.nvim",
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-    },
-    {
         "neovim/nvim-lspconfig",
-        event = { "BufReadPre", "BufNewFile"},
-        dependencies = {
-            "williamboman/mason.nvim",
-            "williamboman/mason-lspconfig.nvim",
-        },
+        event = { "BufReadPre", "BufNewFile" },
         opts = {
-            -- options for vim.diagnostic.config()
             diagnostics = {
                 underline = true,
                 update_in_insert = false,
@@ -32,18 +21,7 @@ return {
             },
             -- add any global capabilities here
             capabilities = {},
-            -- Automatically format on save
-            autoformat = true,
-            -- Enable this to show formatters used in a notification
-            -- Useful for debugging formatter issues
             format_notify = false,
-            -- options for vim.lsp.buf.format
-            -- `bufnr` and `filter` is handled by the LazyVim formatter,
-            -- but can be also overridden when specified
-            format = {
-                formatting_options = nil,
-                timeout_ms = nil,
-            },
             -- LSP Server Settings
             ---@type lspconfig.options
             servers = {
@@ -51,20 +29,7 @@ return {
                     keys = {
                         { "<leader>cR", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Source/Header (C/C++)" },
                     },
-                    root_dir = function(fname)
-                        return require("lspconfig.util").root_pattern(
-                        "Makefile",
-                        "configure.ac",
-                        "configure.in",
-                        "config.h.in",
-                        "meson.build",
-                        "meson_options.txt",
-                        "build.ninja"
-                        )(fname) 
-                        or require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt")(fname) 
-                        or require("lspconfig.util").find_git_ancestor(fname)
-                    end,
-                    capabilities = {}, 
+                    capabilities = {},
                     cmd = {
                         "clangd",
                         "--background-index",
@@ -80,13 +45,13 @@ return {
                         clangdFileStatus = true,
                     },
                 },
-                pyright = {}, 
+                pyright = {},
                 gopls = {},
                 lua_ls = {
                     on_init = function(client)
                         if client.workspace_folders then
                             local path = client.workspace_folders[1].name
-                            if vim.loop.fs_stat(path..'/.luarc.json') or vim.loop.fs_stat(path..'/.luarc.jsonc') then
+                            if vim.loop.fs_stat(path .. '/.luarc.json') or vim.loop.fs_stat(path .. '/.luarc.jsonc') then
                                 return
                             end
                         end
@@ -117,18 +82,24 @@ return {
                 },
             },
         },
-        config = function(_,opts)
-            local mason = require("mason")
-            local mason_lspconfig = require("mason-lspconfig")
-            mason.setup()
-            mason_lspconfig.setup({
-                automatic_installation = true,
-            })
-
-            local lspconfig = require("lspconfig")
-            for name,opt in pairs(opts.servers) do
-                lspconfig[name].setup(opt)
+        config = function(_, opts)
+            for name, opt in pairs(opts.servers) do
+                vim.lsp.config(name, opt)
+                vim.lsp.enable(name)
             end
         end,
+    },
+    {
+        "mason-org/mason.nvim",
+    },
+    {
+        "mason-org/mason-lspconfig.nvim",
+        opts = {
+            ensure_installed = { "lua_ls", "pyright", "clangd", "gopls" },
+        },
+        dependencies = {
+            { "mason-org/mason.nvim", opts = {} },
+            "neovim/nvim-lspconfig",
+        },
     },
 }
