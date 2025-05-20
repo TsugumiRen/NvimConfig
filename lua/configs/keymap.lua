@@ -26,4 +26,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
+local move_to_new_tab = function()
+    local prev_buf = vim.fn.bufnr('#')
+    vim.cmd('tabedit %')
+    vim.cmd('tabprevious')
+    vim.cmd('buffer ' .. prev_buf)
+end
+
+vim.keymap.set('n', '<leader>mt', move_to_new_tab, {})
+
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>');
